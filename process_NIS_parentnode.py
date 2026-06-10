@@ -72,6 +72,10 @@ def calculate_neighbor_ratio(file_a: Path, max_distance: float, max_size: float)
         print(f"Error loading or parsing {source}: {e}")
         return
 
+    # Hard coded particle size filter (to achieve parity with Fiji pipeline)
+    df_merged = df_merged[(df_merged[neighbor_cols[3]] <= 3.0)] # removing large TRITCc puncta
+    # if concerned about small background signal being picked up, can add a minimum size here
+
     # Calculate number of puncta colocalized 
     np_object_counts = df_merged.groupby(neighbor_cols[0])[neighbor_cols[8]].mean().to_numpy()
     np_colocalized = df_merged[(df_merged[neighbor_cols[6]] <= max_distance) & (df_merged[neighbor_cols[3]] <= max_size) & (df_merged[neighbor_cols[14]] <= max_size)].groupby(neighbor_cols[0]).count()[neighbor_cols[6]].to_numpy() # This just works
